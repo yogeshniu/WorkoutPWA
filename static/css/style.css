@@ -1,0 +1,23 @@
+body {
+    background-color: #1a3c1a; /* Dark green */
+    color: #ffffff;
+}
+.card {
+    background-color: #2a4c2a; /* Slightly lighter green */
+}
+.list-group-item {
+    background-color: #2a4c2a;
+    color: #ffffff;
+}
+.btn-success {
+    background-color: #2a6c2a;
+    border-color: #2a6c2a;
+}
+.btn-success:hover {
+    background-color: #1a4c1a;
+    border-color: #1a4c1a;
+}
+.form-control {
+    background-color: #ffffff;
+    color: #000000;
+}
