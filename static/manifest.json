@@ -3,8 +3,8 @@
     "short_name": "Workout Tracker",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#1a3c1a",
-    "theme_color": "#1a3c1a",
+    "background_color": "#1b5e20",
+    "theme_color": "#1b5e20",
     "icons": [
         {
             "src": "/static/images/icon-192.png",

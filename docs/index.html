@@ -6,8 +6,8 @@
     <title>Workout Challenge Tracker</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="./static/css/style.css">
+    <link rel="manifest" href="./static/manifest.json">
     <meta name="theme-color" content="#1b5e20">
 </head>
 <body>
@@ -84,10 +84,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dexie/3.2.4/dexie.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.min.js"></script>
-    <script src="/static/js/main.js"></script>
+    <script src="./static/js/main.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/js/service-worker.js')
+            navigator.serviceWorker.register('./static/js/service-worker.js')
                 .then(reg => console.log('Service Worker registered'))
                 .catch(err => console.error('Service Worker registration failed:', err));
         }
