@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YogiChal - 6-Month Challenge Tracker</title>
+    <title>YogiChal</title>
+    <link rel="icon" type="image/jpg" href="image.jpg">
     <style>
         :root {
             --primary-color: #4c6ef5;
@@ -36,9 +37,39 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 100px;
+            border-radius: 20%; /* iPhone app icon corner radius (20% of width) */
+            overflow: hidden; /* Clip the image to the rounded shape */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow like iPhone icons */
+            object-fit: cover; /* Ensure the image fills the square without distortion */
+        }
         h1 {
             margin: 0;
             font-size: 2.5rem;
+            font-family: 'Montserrat', sans-serif; /* Clean, modern font */
+            font-weight: 700; /* Bold and authoritative */
+            letter-spacing: 1px; /* Slight spacing for professionalism */
+            color: #ffffff; /* White for contrast on gradient header */
+            background: linear-gradient(90deg, #ffffff, #d1d1d1); /* Subtle silver gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.3), /* Subtle shadow for depth */
+                1px 1px 0 rgba(76, 110, 245, 0.2); /* Slight tint with primary color */
+            transition: transform 0.3s ease; /* Smooth hover effect */
+        }
+        
+        h1:hover {
+            transform: scale(1.05); /* Slight scale on hover for interactivity */
         }
 
         .subtitle {
@@ -177,14 +208,14 @@
 
         .stat-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
 
         .stat-card {
             text-align: center;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             background-color: var(--card-color);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -218,8 +249,13 @@
 <body>
     <header>
         <div class="container">
-            <h1>YogiChal</h1>
-            <div class="subtitle">6-Month Challenge Tracker</div>
+            <div class="header-content">
+                <img src="image.jpg" alt="YogiChal Logo" class="logo">
+                <div>
+                    <h1>YogiChal</h1>
+                    <div class="subtitle">6-Month Challenge Tracker</div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -345,7 +381,11 @@
     <script>
         // Data structure
         let challengeData = {
-            startDate: new Date().toISOString().split('T')[0],
+            startDate: (() => {
+                const date = new Date();
+                date.setMonth(date.getMonth() - 6); // Set start date to 6 months ago
+                return date.toISOString().split('T')[0];
+            })(),
             currentStreak: 0,
             bestStreak: 0,
             days: {},
@@ -379,7 +419,11 @@
                     console.error('Error parsing saved data', e);
                     // Reset to default if data is corrupted
                     challengeData = {
-                        startDate: new Date().toISOString().split('T')[0],
+                        startDate: (() => {
+                            const date = new Date();
+                            date.setMonth(date.getMonth() - 6);
+                            return date.toISOString().split('T')[0];
+                        })(),
                         currentStreak: 0,
                         bestStreak: 0,
                         days: {},
@@ -559,12 +603,11 @@
             
             const today = new Date();
             
+            // Prevent navigation before start date or beyond today/end date
             if (date < startDate) {
-                date.setTime(startDate.getTime());
-            } else if (date > today && date > endDate) {
-                return; // Don't allow navigating beyond today or end date
-            } else if (date > endDate) {
-                date.setTime(endDate.getTime());
+                return; // Don't allow navigating before start date
+            } else if (date > today || date > endDate) {
+                return; // Don't allow navigating to future dates or beyond end date
             }
             
             currentViewDate = date.toISOString().split('T')[0];
