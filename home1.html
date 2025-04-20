@@ -692,7 +692,7 @@
             }
             
             const completionRate = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
-            const daysRemaining = Math.max(0, 180 - totalDays);
+            const daysRemaining = Math.max(0,180 - completedDays);
             
             // Update UI
             document.getElementById('days-complete').textContent = completedDays;
