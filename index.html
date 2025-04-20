@@ -47,29 +47,30 @@
         .logo {
             width: 120px;
             height: 100px;
-            border-radius: 20%; /* iPhone app icon corner radius (20% of width) */
-            overflow: hidden; /* Clip the image to the rounded shape */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow like iPhone icons */
-            object-fit: cover; /* Ensure the image fills the square without distortion */
+            border-radius: 20%;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            object-fit: cover;
         }
+
         h1 {
             margin: 0;
             font-size: 2.5rem;
-            font-family: 'Montserrat', sans-serif; /* Clean, modern font */
-            font-weight: 700; /* Bold and authoritative */
-            letter-spacing: 1px; /* Slight spacing for professionalism */
-            color: #ffffff; /* White for contrast on gradient header */
-            background: linear-gradient(90deg, #ffffff, #d1d1d1); /* Subtle silver gradient */
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            background: linear-gradient(90deg, #ffffff, #d1d1d1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 
-                0 1px 2px rgba(0, 0, 0, 0.3), /* Subtle shadow for depth */
-                1px 1px 0 rgba(76, 110, 245, 0.2); /* Slight tint with primary color */
-            transition: transform 0.3s ease; /* Smooth hover effect */
+                0 1px 2px rgba(0, 0, 0, 0.3),
+                1px 1px 0 rgba(76, 110, 245, 0.2);
+            transition: transform 0.3s ease;
         }
         
         h1:hover {
-            transform: scale(1.05); /* Slight scale on hover for interactivity */
+            transform: scale(1.05);
         }
 
         .subtitle {
@@ -167,6 +168,14 @@
             background-color: var(--secondary-color);
         }
 
+        #clear-records {
+            background-color: #dc3545;
+        }
+
+        #clear-records:hover {
+            background-color: #c82333;
+        }
+
         .button-group {
             display: flex;
             gap: 10px;
@@ -178,14 +187,57 @@
             margin-top: 15px;
         }
 
-        th, td {
+        #history-table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #history-table th {
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #history-table th:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #history-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        #history-table tr:hover {
+            background-color: #e9ecef;
+            transition: background-color 0.2s;
+        }
+
+        #history-table td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
 
-        th {
-            background-color: #f1f3f5;
+        #history-table .completed-cell {
+            text-align: center;
+        }
+
+        #history-table .completed-cell.completed {
+            color: #28a745;
+        }
+
+        #history-table .completed-cell.not-completed {
+            color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            #history-table {
+                font-size: 0.9rem;
+            }
+            
+            #history-table th, #history-table td {
+                padding: 8px;
+            }
         }
 
         .streak-section {
@@ -252,7 +304,7 @@
             <div class="header-content">
                 <img src="image.jpg" alt="YogiChal Logo" class="logo">
                 <div>
-                    <h1>YogiChal</h1>
+                    <h2>YogiChal</h2>
                     <div class="subtitle">6-Month Challenge Tracker</div>
                 </div>
             </div>
@@ -271,7 +323,7 @@
                 <div class="card">
                     <h2 class="card-title">Today's Progress</h2>
                     
-                    <div class="exercise-input">
+                    <div class="exercise-input" id="pushup-section">
                         <div class="exercise-label">Push-ups (0/100)</div>
                         <div class="exercise-progress">
                             <div class="progress-bar">
@@ -285,7 +337,7 @@
                         </div>
                     </div>
                     
-                    <div class="exercise-input">
+                    <div class="exercise-input" id="squat-section">
                         <div class="exercise-label">Squats (0/100)</div>
                         <div class="exercise-progress">
                             <div class="progress-bar">
@@ -299,7 +351,7 @@
                         </div>
                     </div>
                     
-                    <div class="exercise-input">
+                    <div class="exercise-input" id="situp-section">
                         <div class="exercise-label">Sit-ups (0/100)</div>
                         <div class="exercise-progress">
                             <div class="progress-bar">
@@ -351,6 +403,7 @@
                             <div class="stat-label">Days Remaining</div>
                         </div>
                     </div>
+                    <button id="clear-records">Clear Records</button>
                 </div>
             </div>
             
@@ -358,14 +411,14 @@
                 <div class="card">
                     <h2 class="card-title">History</h2>
                     <div style="overflow-x: auto;">
-                        <table id="history-table">
+                        <table id="history-table" class="history-table">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Push-ups</th>
-                                    <th>Squats</th>
-                                    <th>Sit-ups</th>
-                                    <th>Completed</th>
+                                    <th data-sort="date">Date</th>
+                                    <th data-sort="pushups">Push-ups</th>
+                                    <th data-sort="squats">Squats</th>
+                                    <th data-sort="situps">Sit-ups</th>
+                                    <th data-sort="completed">Completed</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -383,7 +436,7 @@
         let challengeData = {
             startDate: (() => {
                 const date = new Date();
-                date.setMonth(date.getMonth() - 6); // Set start date to 6 months ago
+                date.setMonth(date.getMonth() - 6);
                 return date.toISOString().split('T')[0];
             })(),
             currentStreak: 0,
@@ -395,18 +448,16 @@
         // Current date being viewed
         let currentViewDate = new Date().toISOString().split('T')[0];
 
+        // Sorting variables
+        let sortDirection = -1; // -1 for descending, 1 for ascending
+        let sortColumn = 'date';
+
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            // Load data from localStorage
             loadData();
-            
-            // Set up current date
             updateDateDisplay();
-            
-            // Setup event listeners
             setupEventListeners();
-            
-            // Update UI with current data
+            setupTableSorting();
             updateUI();
         });
 
@@ -417,7 +468,6 @@
                     challengeData = JSON.parse(savedData);
                 } catch (e) {
                     console.error('Error parsing saved data', e);
-                    // Reset to default if data is corrupted
                     challengeData = {
                         startDate: (() => {
                             const date = new Date();
@@ -431,8 +481,6 @@
                     };
                 }
             }
-            
-            // Ensure current day exists in data
             ensureDayExists(currentViewDate);
         }
 
@@ -459,23 +507,40 @@
             return challengeData.days[dateStr];
         }
 
+        function clearRecords() {
+            if (confirm('Are you sure you want to clear all records? This action cannot be undone.')) {
+                localStorage.removeItem('yogiChalData');
+                challengeData = {
+                    startDate: (() => {
+                        const date = new Date();
+                        date.setMonth(date.getMonth() - 6);
+                        return date.toISOString().split('T')[0];
+                    })(),
+                    currentStreak: 0,
+                    bestStreak: 0,
+                    days: {},
+                    lastSynced: new Date().toISOString()
+                };
+                currentViewDate = new Date().toISOString().split('T')[0];
+                ensureDayExists(currentViewDate);
+                updateUI();
+                alert('All records have been cleared.');
+            }
+        }
+
         function setupEventListeners() {
-            // Add pushups
             document.getElementById('add-pushup').addEventListener('click', function() {
                 addExercise('pushups');
             });
             
-            // Add squats
             document.getElementById('add-squat').addEventListener('click', function() {
                 addExercise('squats');
             });
             
-            // Add situps
             document.getElementById('add-situp').addEventListener('click', function() {
                 addExercise('situps');
             });
             
-            // Navigation buttons
             document.getElementById('prev-day').addEventListener('click', function() {
                 navigateDay(-1);
             });
@@ -484,7 +549,6 @@
                 navigateDay(1);
             });
             
-            // Enter key on inputs
             document.getElementById('pushup-input').addEventListener('keyup', function(e) {
                 if (e.key === 'Enter') addExercise('pushups');
             });
@@ -496,13 +560,30 @@
             document.getElementById('situp-input').addEventListener('keyup', function(e) {
                 if (e.key === 'Enter') addExercise('situps');
             });
+            
+            document.getElementById('clear-records').addEventListener('click', clearRecords);
+        }
+
+        function setupTableSorting() {
+            const headers = document.querySelectorAll('#history-table th');
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const newSortColumn = header.getAttribute('data-sort');
+                    if (sortColumn === newSortColumn) {
+                        sortDirection *= -1;
+                    } else {
+                        sortColumn = newSortColumn;
+                        sortDirection = -1;
+                    }
+                    updateHistoryTable();
+                });
+            });
         }
 
         function addExercise(type) {
             const today = new Date().toISOString().split('T')[0];
             const dayData = ensureDayExists(currentViewDate);
             
-            // Only allow adding exercises for today or past dates
             if (new Date(currentViewDate) > new Date(today)) {
                 alert("You can't log exercises for future dates!");
                 return;
@@ -519,36 +600,22 @@
                 return;
             }
             
-            // Ensure we don't exceed 100
             const newTotal = Math.min(dayData[type] + count, 100);
             const actualAdded = newTotal - dayData[type];
             
             if (actualAdded > 0) {
-                // Add to count
                 dayData[type] = newTotal;
-                
-                // Add to log
                 dayData.logs.push({
                     type: type,
                     count: actualAdded,
                     timestamp: new Date().toISOString()
                 });
-                
-                // Check if day is completed
                 checkDayCompletion(dayData);
-                
-                // Update streaks if it's today
                 if (currentViewDate === today) {
                     updateStreaks();
                 }
-                
-                // Save data
                 saveData();
-                
-                // Update UI
                 updateUI();
-                
-                // Clear input
                 input.value = '';
             } else {
                 alert("You've already reached 100 " + type + " for today!");
@@ -559,7 +626,6 @@
             const wasCompleted = dayData.completed;
             dayData.completed = (dayData.pushups >= 100 && dayData.squats >= 100 && dayData.situps >= 100);
             
-            // If newly completed today, update streak
             if (!wasCompleted && dayData.completed && currentViewDate === new Date().toISOString().split('T')[0]) {
                 updateStreaks();
             }
@@ -570,11 +636,9 @@
             const todayData = challengeData.days[today];
             
             if (todayData && todayData.completed) {
-                // Check for streak
                 let streak = 1;
                 let checkDate = new Date(today);
                 
-                // Check previous consecutive days
                 while (true) {
                     checkDate.setDate(checkDate.getDate() - 1);
                     const dateStr = checkDate.toISOString().split('T')[0];
@@ -596,18 +660,14 @@
             const date = new Date(currentViewDate);
             date.setDate(date.getDate() + offset);
             
-            // Limit navigation to 6 months from start date
             const startDate = new Date(challengeData.startDate);
             const endDate = new Date(startDate);
             endDate.setMonth(endDate.getMonth() + 6);
             
             const today = new Date();
             
-            // Prevent navigation before start date or beyond today/end date
-            if (date < startDate) {
-                return; // Don't allow navigating before start date
-            } else if (date > today || date > endDate) {
-                return; // Don't allow navigating to future dates or beyond end date
+            if (date < startDate || date > today || date > endDate) {
+                return;
             }
             
             currentViewDate = date.toISOString().split('T')[0];
@@ -620,17 +680,13 @@
             const date = new Date(currentViewDate);
             const today = new Date().toISOString().split('T')[0];
             
-            let dateText;
-            if (currentViewDate === today) {
-                dateText = "Today";
-            } else {
-                dateText = date.toLocaleDateString('en-US', { 
+            let dateText = currentViewDate === today ? "Today" :
+                date.toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
                 });
-            }
             
             document.getElementById('current-date').textContent = dateText;
         }
@@ -638,40 +694,39 @@
         function updateUI() {
             const dayData = challengeData.days[currentViewDate];
             
-            // Update progress bars
             updateProgressBar('pushup', dayData.pushups);
             updateProgressBar('squat', dayData.squats);
             updateProgressBar('situp', dayData.situps);
             
-            // Update streak counters
             document.getElementById('current-streak').textContent = challengeData.currentStreak;
             document.getElementById('best-streak').textContent = challengeData.bestStreak;
             
-            // Update stats
             updateStats();
-            
-            // Update history table
             updateHistoryTable();
         }
 
         function updateProgressBar(type, value) {
             const percent = Math.min(value, 100);
-            document.getElementById(`${type}-progress`).style.width = `${percent}%`;
-            document.getElementById(`${type}-count`).textContent = `${value}/100`;
+            const progressElement = document.getElementById(`${type}-progress`);
+            const countElement = document.getElementById(`${type}-count`);
             
-            // Select the correct exercise label based on type
-            const labelSelector = type === 'pushup' ? '.exercise-input:nth-child(1) .exercise-label' :
-                                 type === 'squat' ? '.exercise-input:nth-child(2) .exercise-label' :
-                                 '.exercise-input:nth-child(3) .exercise-label';
+            if (progressElement && countElement) {
+                progressElement.style.width = `${percent}%`;
+                countElement.textContent = `${value}/100`;
+            }
             
-            const label = document.querySelector(labelSelector);
+            const displayName = type === 'pushup' ? 'Push-ups' :
+                               type === 'squat' ? 'Squats' : 'Sit-ups';
+            
+            const sectionElement = document.getElementById(`${type}-section`);
+            const label = sectionElement ? sectionElement.querySelector('.exercise-label') : null;
+            
             if (label) {
-                label.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)}s (${value}/100)`;
+                label.textContent = `${displayName} (${value}/100)`;
             }
         }
 
         function updateStats() {
-            // Calculate statistics
             let totalDays = 0;
             let completedDays = 0;
             let totalPushups = 0;
@@ -681,7 +736,7 @@
             const today = new Date();
             const startDate = new Date(challengeData.startDate);
             const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1;
-            totalDays = Math.min(daysDiff, 180); // Cap at 180 days
+            totalDays = Math.min(daysDiff, 180);
             
             for (const dateStr in challengeData.days) {
                 const dayData = challengeData.days[dateStr];
@@ -692,9 +747,8 @@
             }
             
             const completionRate = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
-            const daysRemaining = Math.max(0,180 - completedDays);
+            const daysRemaining = Math.max(0, 180 - completedDays);
             
-            // Update UI
             document.getElementById('days-complete').textContent = completedDays;
             document.getElementById('completion-rate').textContent = `${completionRate}%`;
             document.getElementById('total-pushups').textContent = totalPushups;
@@ -707,14 +761,28 @@
             const tbody = document.querySelector('#history-table tbody');
             tbody.innerHTML = '';
             
-            // Get sorted dates (most recent first)
-            const dates = Object.keys(challengeData.days).sort().reverse();
+            let dates = Object.keys(challengeData.days);
+            
+            dates.sort((a, b) => {
+                const dayA = challengeData.days[a];
+                const dayB = challengeData.days[b];
+                
+                let comparison = 0;
+                if (sortColumn === 'date') {
+                    comparison = new Date(a) - new Date(b);
+                } else if (sortColumn === 'completed') {
+                    comparison = (dayB.completed ? 1 : 0) - (dayA.completed ? 1 : 0);
+                } else {
+                    comparison = dayB[sortColumn] - dayA[sortColumn];
+                }
+                
+                return comparison * sortDirection;
+            });
             
             dates.forEach(dateStr => {
                 const dayData = challengeData.days[dateStr];
                 const row = document.createElement('tr');
                 
-                // Format date
                 const date = new Date(dateStr);
                 const formattedDate = date.toLocaleDateString('en-US', { 
                     month: 'short', 
@@ -722,7 +790,6 @@
                     year: 'numeric'
                 });
                 
-                // Create cells
                 const dateCell = document.createElement('td');
                 dateCell.textContent = formattedDate;
                 
@@ -736,16 +803,15 @@
                 situpsCell.textContent = dayData.situps;
                 
                 const completedCell = document.createElement('td');
+                completedCell.className = 'completed-cell ' + (dayData.completed ? 'completed' : 'not-completed');
                 completedCell.innerHTML = dayData.completed ? '✅' : '❌';
                 
-                // Add cells to row
                 row.appendChild(dateCell);
                 row.appendChild(pushupsCell);
                 row.appendChild(squatsCell);
                 row.appendChild(situpsCell);
                 row.appendChild(completedCell);
                 
-                // Add row to table
                 tbody.appendChild(row);
             });
         }
