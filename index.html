@@ -175,17 +175,6 @@
             font-size: 1.4rem;
         }
 
-        #charts-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .chart-wrapper {
-            height: 300px;
-            margin-bottom: 20px;
-        }
-
         .stat-cards {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -223,85 +212,6 @@
         .date-display {
             font-size: 1.2rem;
             font-weight: bold;
-        }
-
-        .loading-spinner {
-            display: none;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-            margin: 20px auto;
-        }
-
-        .export-import {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-
-        .modal-content {
-            background-color: var(--card-color);
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 80%;
-            max-width: 600px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-        }
-
-        textarea {
-            width: 100%;
-            height: 200px;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-family: monospace;
-        }
-
-        .storage-options {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .storage-options h3 {
-            margin-top: 0;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -405,30 +315,10 @@
                             <div class="stat-label">Days Remaining</div>
                         </div>
                     </div>
-
-                    <div class="export-import">
-                        <h3>Data Management</h3>
-                        <div class="button-group">
-                            <button id="export-data">Export Data</button>
-                            <button id="import-data">Import Data</button>
-                        </div>
-                    </div>
                 </div>
             </div>
             
             <div class="right-panel">
-                <div class="card">
-                    <h2 class="card-title">Progress Charts</h2>
-                    <div id="charts-container">
-                        <div class="chart-wrapper">
-                            <canvas id="weekly-chart"></canvas>
-                        </div>
-                        <div class="chart-wrapper">
-                            <canvas id="monthly-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="card">
                     <h2 class="card-title">History</h2>
                     <div style="overflow-x: auto;">
@@ -452,21 +342,6 @@
         </div>
     </div>
 
-    <!-- Export/Import Modal -->
-    <div id="data-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modal-title">Export Data</h2>
-            <p id="modal-instructions">Copy this JSON data to save your progress. You can import it later.</p>
-            <textarea id="json-data"></textarea>
-            <div class="button-group">
-                <button id="modal-action-btn">Copy to Clipboard</button>
-                <button id="modal-cancel-btn">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
         // Data structure
         let challengeData = {
@@ -479,9 +354,6 @@
 
         // Current date being viewed
         let currentViewDate = new Date().toISOString().split('T')[0];
-
-        // Initialize charts
-        let weeklyChart, monthlyChart;
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
@@ -496,9 +368,6 @@
             
             // Update UI with current data
             updateUI();
-            
-            // Initialize charts
-            initCharts();
         });
 
         function loadData() {
@@ -582,23 +451,6 @@
             
             document.getElementById('situp-input').addEventListener('keyup', function(e) {
                 if (e.key === 'Enter') addExercise('situps');
-            });
-
-            // Export/Import data
-            document.getElementById('export-data').addEventListener('click', exportData);
-            document.getElementById('import-data').addEventListener('click', importData);
-
-            // Modal actions
-            document.querySelector('.close').addEventListener('click', closeModal);
-            document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
-            document.getElementById('modal-action-btn').addEventListener('click', handleModalAction);
-
-            // Window click to close modal
-            window.addEventListener('click', function(event) {
-                const modal = document.getElementById('data-modal');
-                if (event.target === modal) {
-                    closeModal();
-                }
             });
         }
 
@@ -757,9 +609,6 @@
             
             // Update history table
             updateHistoryTable();
-            
-            // Update charts
-            updateCharts();
         }
 
         function updateProgressBar(type, value) {
@@ -857,257 +706,6 @@
                 tbody.appendChild(row);
             });
         }
-
-        function initCharts() {
-            const weeklyCtx = document.getElementById('weekly-chart').getContext('2d');
-            const monthlyCtx = document.getElementById('monthly-chart').getContext('2d');
-            
-            // Weekly chart
-            weeklyChart = new Chart(weeklyCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [
-                        {
-                            label: 'Push-ups',
-                            data: [0, 0, 0, 0, 0, 0, 0],
-                            backgroundColor: 'rgba(76, 110, 245, 0.7)'
-                        },
-                        {
-                            label: 'Squats',
-                            data: [0, 0, 0, 0, 0, 0, 0],
-                            backgroundColor: 'rgba(112, 72, 232, 0.7)'
-                        },
-                        {
-                            label: 'Sit-ups',
-                            data: [0, 0, 0, 0, 0, 0, 0],
-                            backgroundColor: 'rgba(94, 92, 230, 0.7)'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'This Week'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    }
-                }
-            });
-            
-            // Monthly chart
-            monthlyChart = new Chart(monthlyCtx, {
-                type: 'line',
-                data: {
-                    labels: Array(30).fill('').map((_, i) => i + 1),
-                    datasets: [
-                        {
-                            label: 'Daily Completion',
-                            data: Array(30).fill(0),
-                            borderColor: 'rgba(76, 110, 245, 1)',
-                            tension: 0.1,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Monthly Progress'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            updateCharts();
-        }
-
-        function updateCharts() {
-            // Get current week data
-            const today = new Date();
-            const currentWeekData = getWeekData(today);
-            
-            // Update weekly chart
-            for (let i = 0; i < 7; i++) {
-                weeklyChart.data.datasets[0].data[i] = currentWeekData.pushups[i];
-                weeklyChart.data.datasets[1].data[i] = currentWeekData.squats[i];
-                weeklyChart.data.datasets[2].data[i] = currentWeekData.situps[i];
-            }
-            weeklyChart.update();
-            
-            // Get month data
-            const currentMonthData = getMonthData(today);
-            
-            // Update monthly chart
-            monthlyChart.data.labels = currentMonthData.labels;
-            monthlyChart.data.datasets[0].data = currentMonthData.completion;
-            monthlyChart.options.plugins.title.text = `${today.toLocaleString('default', { month: 'long' })} Progress`;
-            monthlyChart.update();
-        }
-
-        function getWeekData(date) {
-            const result = {
-                pushups: Array(7).fill(0),
-                squats: Array(7).fill(0),
-                situps: Array(7).fill(0)
-            };
-            
-            // Get first day of week (Monday = 0)
-            const day = date.getDay() || 7; // Convert Sunday (0) to 7
-            const firstDay = new Date(date);
-            firstDay.setDate(date.getDate() - day + 1); // Start from Monday
-            
-            // Collect data for each day of current week
-            for (let i = 0; i < 7; i++) {
-                const currentDate = new Date(firstDay);
-                currentDate.setDate(firstDay.getDate() + i);
-                const dateStr = currentDate.toISOString().split('T')[0];
-                
-                if (challengeData.days[dateStr]) {
-                    result.pushups[i] = challengeData.days[dateStr].pushups;
-                    result.squats[i] = challengeData.days[dateStr].squats;
-                    result.situps[i] = challengeData.days[dateStr].situps;
-                }
-            }
-            
-            return result;
-        }
-
-        function getMonthData(date) {
-            const result = {
-                labels: [],
-                completion: []
-            };
-            
-            // Get first day of month
-            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            
-            // Generate labels
-            for (let i = 1; i <= daysInMonth; i++) {
-                result.labels.push(i);
-                
-                const currentDate = new Date(firstDay);
-                currentDate.setDate(i);
-                const dateStr = currentDate.toISOString().split('T')[0];
-                
-                if (challengeData.days[dateStr]) {
-                    const dayData = challengeData.days[dateStr];
-                    // Calculate completion percentage
-                    const totalExercises = dayData.pushups + dayData.squats + dayData.situps;
-                    const maxPossible = 300; // 100 of each exercise
-                    const percentage = Math.round((totalExercises / maxPossible) * 100);
-                    result.completion.push(percentage);
-                } else {
-                    result.completion.push(0);
-                }
-            }
-            
-            return result;
-        }
-
-        // Export/Import functionality
-        function exportData() {
-            const modal = document.getElementById('data-modal');
-            const jsonTextarea = document.getElementById('json-data');
-            const modalTitle = document.getElementById('modal-title');
-            const modalInstructions = document.getElementById('modal-instructions');
-            const actionBtn = document.getElementById('modal-action-btn');
-
-            modalTitle.textContent = 'Export Data';
-            modalInstructions.textContent = 'Copy this JSON data to save your progress. You can import it later or use it with GitHub.';
-            jsonTextarea.value = JSON.stringify(challengeData, null, 2);
-            actionBtn.textContent = 'Copy to Clipboard';
-            
-            // Set current modal action
-            actionBtn.dataset.action = 'copy';
-            
-            modal.style.display = 'block';
-        }
-
-        function importData() {
-            const modal = document.getElementById('data-modal');
-            const jsonTextarea = document.getElementById('json-data');
-            const modalTitle = document.getElementById('modal-title');
-            const modalInstructions = document.getElementById('modal-instructions');
-            const actionBtn = document.getElementById('modal-action-btn');
-
-            modalTitle.textContent = 'Import Data';
-            modalInstructions.textContent = 'Paste your previously exported JSON data here.';
-            jsonTextarea.value = '';
-            actionBtn.textContent = 'Import Data';
-            
-            // Set current modal action
-            actionBtn.dataset.action = 'import';
-            
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('data-modal');
-            modal.style.display = 'none';
-        }
-
-        function handleModalAction() {
-            const action = document.getElementById('modal-action-btn').dataset.action;
-            const jsonTextarea = document.getElementById('json-data');
-            
-            if (action === 'copy') {
-                // Copy to clipboard
-                jsonTextarea.select();
-                document.execCommand('copy');
-                alert('Data copied to clipboard!');
-                closeModal();
-            } else if (action === 'import') {
-                // Import data
-                try {
-                    const importedData = JSON.parse(jsonTextarea.value);
-                    
-                    // Validate the imported data format
-                    if (!importedData.days || !importedData.startDate) {
-                        throw new Error('Invalid data format');
-                    }
-                    
-                    // Apply the imported data
-                    challengeData = importedData;
-                    saveData();
-                    updateUI();
-                    
-                    alert('Data imported successfully!');
-                    closeModal();
-                } catch (e) {
-                    alert('Error importing data. Please check your JSON format.');
-                }
-            }
-        }
-
-        // GitHub integration helpers
-        function getGistFilename() {
-            return 'yogichal-data.json';
-        }
     </script>
-</head>
+</body>
 </html>
