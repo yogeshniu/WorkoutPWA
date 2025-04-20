@@ -3,77 +3,1122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YogiChal - Workout Tracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <title>YogiChal - 6-Month Challenge Tracker</title>
+    <style>
+        :root {
+            --primary-color: #4c6ef5;
+            --secondary-color: #7048e8;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .exercise-input {
+            margin-bottom: 15px;
+        }
+
+        .exercise-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .exercise-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            min-width: 60px;
+            text-align: right;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f1f3f5;
+        }
+
+        .streak-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+
+        .streak {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .streak-flame {
+            color: #ff6b6b;
+            font-size: 1.4rem;
+        }
+
+        #charts-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .chart-wrapper {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: var(--card-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .date-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin: 20px auto;
+        }
+
+        .export-import {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+
+        .storage-options {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .storage-options h3 {
+            margin-top: 0;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <div class="container py-4">
-        <h1 class="text-center mb-4">YogiChal</h1>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card exercise-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Pushups</h5>
-                        <div class="progress mb-3">
-                            <div id="pushupProgress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0/100</div>
+    <header>
+        <div class="container">
+            <h1>YogiChal</h1>
+            <div class="subtitle">6-Month Challenge Tracker</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card date-nav">
+            <button id="prev-day">◀ Previous Day</button>
+            <div class="date-display" id="current-date">Today</div>
+            <button id="next-day">Next Day ▶</button>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="card">
+                    <h2 class="card-title">Today's Progress</h2>
+                    
+                    <div class="exercise-input">
+                        <div class="exercise-label">Push-ups (0/100)</div>
+                        <div class="exercise-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="pushup-progress" style="width: 0%;"></div>
+                            </div>
+                            <div class="progress-text" id="pushup-count">0/100</div>
                         </div>
-                        <div class="input-group">
-                            <input type="number" id="pushupInput" class="form-control" placeholder="Enter reps">
-                            <button class="btn btn-primary" onclick="addExercise('pushup')">Add</button>
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <input type="number" id="pushup-input" min="1" max="100" placeholder="Add">
+                            <button id="add-pushup">Add</button>
                         </div>
-                        <div id="pushupEntries" class="mt-2 small"></div>
+                    </div>
+                    
+                    <div class="exercise-input">
+                        <div class="exercise-label">Squats (0/100)</div>
+                        <div class="exercise-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="squat-progress" style="width: 0%;"></div>
+                            </div>
+                            <div class="progress-text" id="squat-count">0/100</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <input type="number" id="squat-input" min="1" max="100" placeholder="Add">
+                            <button id="add-squat">Add</button>
+                        </div>
+                    </div>
+                    
+                    <div class="exercise-input">
+                        <div class="exercise-label">Sit-ups (0/100)</div>
+                        <div class="exercise-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="situp-progress" style="width: 0%;"></div>
+                            </div>
+                            <div class="progress-text" id="situp-count">0/100</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <input type="number" id="situp-input" min="1" max="100" placeholder="Add">
+                            <button id="add-situp">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="streak-section">
+                        <div class="streak">
+                            <span class="streak-flame">🔥</span> Current Streak: <span id="current-streak">0</span> days
+                        </div>
+                        <div>
+                            <span>Best: <span id="best-streak">0</span> days</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Quick Stats</h2>
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="stat-value" id="days-complete">0</div>
+                            <div class="stat-label">Days Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="completion-rate">0%</div>
+                            <div class="stat-label">Completion Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-pushups">0</div>
+                            <div class="stat-label">Total Push-ups</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-squats">0</div>
+                            <div class="stat-label">Total Squats</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-situps">0</div>
+                            <div class="stat-label">Total Sit-ups</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="days-remaining">180</div>
+                            <div class="stat-label">Days Remaining</div>
+                        </div>
+                    </div>
+
+                    <div class="export-import">
+                        <h3>Data Management</h3>
+                        <div class="button-group">
+                            <button id="export-data">Export Data</button>
+                            <button id="import-data">Import Data</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card exercise-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Squats</h5>
-                        <div class="progress mb-3">
-                            <div id="squatProgress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0/100</div>
+            
+            <div class="right-panel">
+                <div class="card">
+                    <h2 class="card-title">Progress Charts</h2>
+                    <div id="charts-container">
+                        <div class="chart-wrapper">
+                            <canvas id="weekly-chart"></canvas>
                         </div>
-                        <div class="input-group">
-                            <input type="number" id="squatInput" class="form-control" placeholder="Enter reps">
-                            <button class="btn btn-primary" onclick="addExercise('squat')">Add</button>
+                        <div class="chart-wrapper">
+                            <canvas id="monthly-chart"></canvas>
                         </div>
-                        <div id="squatEntries" class="mt-2 small"></div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card exercise-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Situps</h5>
-                        <div class="progress mb-3">
-                            <div id="situpProgress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0/100</div>
-                        </div>
-                        <div class="input-group">
-                            <input type="number" id="situpInput" class="form-control" placeholder="Enter reps">
-                            <button class="btn btn-primary" onclick="addExercise('situp')">Add</button>
-                        </div>
-                        <div id="situpEntries" class="mt-2 small"></div>
+                
+                <div class="card">
+                    <h2 class="card-title">History</h2>
+                    <div style="overflow-x: auto;">
+                        <table id="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Push-ups</th>
+                                    <th>Squats</th>
+                                    <th>Sit-ups</th>
+                                    <th>Completed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- History will be filled by JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+                <div class="card storage-options">
+                    <h3>GitHub Storage Options:</h3>
+                    <p>Since this app is hosted on GitHub Pages, here are options for data persistence:</p>
+                    <ol>
+                        <li><strong>Local Storage:</strong> Data stored in your browser (current method). Good for development but not for production.</li>
+                        <li><strong>GitHub Gist:</strong> Configure your GitHub token and Gist ID to save data to a GitHub Gist.</li>
+                        <li><strong>External Database:</strong> Connect to Firebase or similar service.</li>
+                    </ol>
+                    <p>See <code>README.md</code> for implementation instructions.</p>
+                </div>
             </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col-12">
-                <canvas id="historyChart"></canvas>
-            </div>
-        </div>
-        <div class="streak-info">
-            <span id="currentStreak">Current Streak: 0 days</span>
-            <br>
-            <span id="longestStreak">Longest Streak: 0 days</span>
-        </div>
-        <div id="calendar" class="text-center mt-4">
-            <h4>Workout Calendar</h4>
-            <div id="calendarDays"></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
-</body>
+    <!-- Export/Import Modal -->
+    <div id="data-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Export Data</h2>
+            <p id="modal-instructions">Copy this JSON data to save your progress. You can import it later.</p>
+            <textarea id="json-data"></textarea>
+            <div class="button-group">
+                <button id="modal-action-btn">Copy to Clipboard</button>
+                <button id="modal-cancel-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Data structure
+        let challengeData = {
+            startDate: new Date().toISOString().split('T')[0],
+            currentStreak: 0,
+            bestStreak: 0,
+            days: {},
+            lastSynced: new Date().toISOString()
+        };
+
+        // Current date being viewed
+        let currentViewDate = new Date().toISOString().split('T')[0];
+
+        // Initialize charts
+        let weeklyChart, monthlyChart;
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data from localStorage
+            loadData();
+            
+            // Set up current date
+            updateDateDisplay();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Update UI with current data
+            updateUI();
+            
+            // Initialize charts
+            initCharts();
+        });
+
+        function loadData() {
+            const savedData = localStorage.getItem('yogiChalData');
+            if (savedData) {
+                try {
+                    challengeData = JSON.parse(savedData);
+                } catch (e) {
+                    console.error('Error parsing saved data', e);
+                    // Reset to default if data is corrupted
+                    challengeData = {
+                        startDate: new Date().toISOString().split('T')[0],
+                        currentStreak: 0,
+                        bestStreak: 0,
+                        days: {},
+                        lastSynced: new Date().toISOString()
+                    };
+                }
+            }
+            
+            // Ensure current day exists in data
+            ensureDayExists(currentViewDate);
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('yogiChalData', JSON.stringify(challengeData));
+                challengeData.lastSynced = new Date().toISOString();
+            } catch (e) {
+                console.error('Error saving data', e);
+                alert('Error saving data. Your browser storage might be full or restricted.');
+            }
+        }
+
+        function ensureDayExists(dateStr) {
+            if (!challengeData.days[dateStr]) {
+                challengeData.days[dateStr] = {
+                    pushups: 0,
+                    squats: 0,
+                    situps: 0,
+                    completed: false,
+                    logs: []
+                };
+            }
+            return challengeData.days[dateStr];
+        }
+
+        function setupEventListeners() {
+            // Add pushups
+            document.getElementById('add-pushup').addEventListener('click', function() {
+                addExercise('pushups');
+            });
+            
+            // Add squats
+            document.getElementById('add-squat').addEventListener('click', function() {
+                addExercise('squats');
+            });
+            
+            // Add situps
+            document.getElementById('add-situp').addEventListener('click', function() {
+                addExercise('situps');
+            });
+            
+            // Navigation buttons
+            document.getElementById('prev-day').addEventListener('click', function() {
+                navigateDay(-1);
+            });
+            
+            document.getElementById('next-day').addEventListener('click', function() {
+                navigateDay(1);
+            });
+            
+            // Enter key on inputs
+            document.getElementById('pushup-input').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') addExercise('pushups');
+            });
+            
+            document.getElementById('squat-input').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') addExercise('squats');
+            });
+            
+            document.getElementById('situp-input').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') addExercise('situps');
+            });
+
+            // Export/Import data
+            document.getElementById('export-data').addEventListener('click', exportData);
+            document.getElementById('import-data').addEventListener('click', importData);
+
+            // Modal actions
+            document.querySelector('.close').addEventListener('click', closeModal);
+            document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
+            document.getElementById('modal-action-btn').addEventListener('click', handleModalAction);
+
+            // Window click to close modal
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('data-modal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        function addExercise(type) {
+            const today = new Date().toISOString().split('T')[0];
+            const dayData = ensureDayExists(currentViewDate);
+            
+            // Only allow adding exercises for today or past dates
+            if (new Date(currentViewDate) > new Date(today)) {
+                alert("You can't log exercises for future dates!");
+                return;
+            }
+            
+            const inputId = type === 'pushups' ? 'pushup-input' : 
+                           type === 'squats' ? 'squat-input' : 'situp-input';
+            
+            const input = document.getElementById(inputId);
+            const count = parseInt(input.value);
+            
+            if (isNaN(count) || count <= 0) {
+                alert("Please enter a valid number greater than 0");
+                return;
+            }
+            
+            // Ensure we don't exceed 100
+            const newTotal = Math.min(dayData[type] + count, 100);
+            const actualAdded = newTotal - dayData[type];
+            
+            if (actualAdded > 0) {
+                // Add to count
+                dayData[type] = newTotal;
+                
+                // Add to log
+                dayData.logs.push({
+                    type: type,
+                    count: actualAdded,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Check if day is completed
+                checkDayCompletion(dayData);
+                
+                // Update streaks if it's today
+                if (currentViewDate === today) {
+                    updateStreaks();
+                }
+                
+                // Save data
+                saveData();
+                
+                // Update UI
+                updateUI();
+                
+                // Clear input
+                input.value = '';
+            } else {
+                alert("You've already reached 100 " + type + " for today!");
+            }
+        }
+        
+        function checkDayCompletion(dayData) {
+            const wasCompleted = dayData.completed;
+            dayData.completed = (dayData.pushups >= 100 && dayData.squats >= 100 && dayData.situps >= 100);
+            
+            // If newly completed today, update streak
+            if (!wasCompleted && dayData.completed && currentViewDate === new Date().toISOString().split('T')[0]) {
+                updateStreaks();
+            }
+        }
+        
+        function updateStreaks() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayData = challengeData.days[today];
+            
+            if (todayData && todayData.completed) {
+                // Check for streak
+                let streak = 1;
+                let checkDate = new Date(today);
+                
+                // Check previous consecutive days
+                while (true) {
+                    checkDate.setDate(checkDate.getDate() - 1);
+                    const dateStr = checkDate.toISOString().split('T')[0];
+                    const dayData = challengeData.days[dateStr];
+                    
+                    if (dayData && dayData.completed) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+                
+                challengeData.currentStreak = streak;
+                challengeData.bestStreak = Math.max(challengeData.bestStreak, streak);
+            }
+        }
+
+        function navigateDay(offset) {
+            const date = new Date(currentViewDate);
+            date.setDate(date.getDate() + offset);
+            
+            // Limit navigation to 6 months from start date
+            const startDate = new Date(challengeData.startDate);
+            const endDate = new Date(startDate);
+            endDate.setMonth(endDate.getMonth() + 6);
+            
+            const today = new Date();
+            
+            if (date < startDate) {
+                date.setTime(startDate.getTime());
+            } else if (date > today && date > endDate) {
+                return; // Don't allow navigating beyond today or end date
+            } else if (date > endDate) {
+                date.setTime(endDate.getTime());
+            }
+            
+            currentViewDate = date.toISOString().split('T')[0];
+            ensureDayExists(currentViewDate);
+            updateDateDisplay();
+            updateUI();
+        }
+
+        function updateDateDisplay() {
+            const date = new Date(currentViewDate);
+            const today = new Date().toISOString().split('T')[0];
+            
+            let dateText;
+            if (currentViewDate === today) {
+                dateText = "Today";
+            } else {
+                dateText = date.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+            
+            document.getElementById('current-date').textContent = dateText;
+        }
+
+        function updateUI() {
+            const dayData = challengeData.days[currentViewDate];
+            
+            // Update progress bars
+            updateProgressBar('pushup', dayData.pushups);
+            updateProgressBar('squat', dayData.squats);
+            updateProgressBar('situp', dayData.situps);
+            
+            // Update streak counters
+            document.getElementById('current-streak').textContent = challengeData.currentStreak;
+            document.getElementById('best-streak').textContent = challengeData.bestStreak;
+            
+            // Update stats
+            updateStats();
+            
+            // Update history table
+            updateHistoryTable();
+            
+            // Update charts
+            updateCharts();
+        }
+
+        function updateProgressBar(type, value) {
+            const percent = Math.min(value, 100);
+            document.getElementById(`${type}-progress`).style.width = `${percent}%`;
+            document.getElementById(`${type}-count`).textContent = `${value}/100`;
+            
+            // Select the correct exercise label based on type
+            const labelSelector = type === 'pushup' ? '.exercise-input:nth-child(1) .exercise-label' :
+                                 type === 'squat' ? '.exercise-input:nth-child(2) .exercise-label' :
+                                 '.exercise-input:nth-child(3) .exercise-label';
+            
+            const label = document.querySelector(labelSelector);
+            if (label) {
+                label.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)}s (${value}/100)`;
+            }
+        }
+
+        function updateStats() {
+            // Calculate statistics
+            let totalDays = 0;
+            let completedDays = 0;
+            let totalPushups = 0;
+            let totalSquats = 0;
+            let totalSitups = 0;
+            
+            const today = new Date();
+            const startDate = new Date(challengeData.startDate);
+            const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            totalDays = Math.min(daysDiff, 180); // Cap at 180 days
+            
+            for (const dateStr in challengeData.days) {
+                const dayData = challengeData.days[dateStr];
+                if (dayData.completed) completedDays++;
+                totalPushups += dayData.pushups;
+                totalSquats += dayData.squats;
+                totalSitups += dayData.situps;
+            }
+            
+            const completionRate = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
+            const daysRemaining = Math.max(0, 180 - totalDays);
+            
+            // Update UI
+            document.getElementById('days-complete').textContent = completedDays;
+            document.getElementById('completion-rate').textContent = `${completionRate}%`;
+            document.getElementById('total-pushups').textContent = totalPushups;
+            document.getElementById('total-squats').textContent = totalSquats;
+            document.getElementById('total-situps').textContent = totalSitups;
+            document.getElementById('days-remaining').textContent = daysRemaining;
+        }
+
+        function updateHistoryTable() {
+            const tbody = document.querySelector('#history-table tbody');
+            tbody.innerHTML = '';
+            
+            // Get sorted dates (most recent first)
+            const dates = Object.keys(challengeData.days).sort().reverse();
+            
+            dates.forEach(dateStr => {
+                const dayData = challengeData.days[dateStr];
+                const row = document.createElement('tr');
+                
+                // Format date
+                const date = new Date(dateStr);
+                const formattedDate = date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                // Create cells
+                const dateCell = document.createElement('td');
+                dateCell.textContent = formattedDate;
+                
+                const pushupsCell = document.createElement('td');
+                pushupsCell.textContent = dayData.pushups;
+                
+                const squatsCell = document.createElement('td');
+                squatsCell.textContent = dayData.squats;
+                
+                const situpsCell = document.createElement('td');
+                situpsCell.textContent = dayData.situps;
+                
+                const completedCell = document.createElement('td');
+                completedCell.innerHTML = dayData.completed ? '✅' : '❌';
+                
+                // Add cells to row
+                row.appendChild(dateCell);
+                row.appendChild(pushupsCell);
+                row.appendChild(squatsCell);
+                row.appendChild(situpsCell);
+                row.appendChild(completedCell);
+                
+                // Add row to table
+                tbody.appendChild(row);
+            });
+        }
+
+        function initCharts() {
+            const weeklyCtx = document.getElementById('weekly-chart').getContext('2d');
+            const monthlyCtx = document.getElementById('monthly-chart').getContext('2d');
+            
+            // Weekly chart
+            weeklyChart = new Chart(weeklyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Push-ups',
+                            data: [0, 0, 0, 0, 0, 0, 0],
+                            backgroundColor: 'rgba(76, 110, 245, 0.7)'
+                        },
+                        {
+                            label: 'Squats',
+                            data: [0, 0, 0, 0, 0, 0, 0],
+                            backgroundColor: 'rgba(112, 72, 232, 0.7)'
+                        },
+                        {
+                            label: 'Sit-ups',
+                            data: [0, 0, 0, 0, 0, 0, 0],
+                            backgroundColor: 'rgba(94, 92, 230, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'This Week'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Monthly chart
+            monthlyChart = new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: Array(30).fill('').map((_, i) => i + 1),
+                    datasets: [
+                        {
+                            label: 'Daily Completion',
+                            data: Array(30).fill(0),
+                            borderColor: 'rgba(76, 110, 245, 1)',
+                            tension: 0.1,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Progress'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            updateCharts();
+        }
+
+        function updateCharts() {
+            // Get current week data
+            const today = new Date();
+            const currentWeekData = getWeekData(today);
+            
+            // Update weekly chart
+            for (let i = 0; i < 7; i++) {
+                weeklyChart.data.datasets[0].data[i] = currentWeekData.pushups[i];
+                weeklyChart.data.datasets[1].data[i] = currentWeekData.squats[i];
+                weeklyChart.data.datasets[2].data[i] = currentWeekData.situps[i];
+            }
+            weeklyChart.update();
+            
+            // Get month data
+            const currentMonthData = getMonthData(today);
+            
+            // Update monthly chart
+            monthlyChart.data.labels = currentMonthData.labels;
+            monthlyChart.data.datasets[0].data = currentMonthData.completion;
+            monthlyChart.options.plugins.title.text = `${today.toLocaleString('default', { month: 'long' })} Progress`;
+            monthlyChart.update();
+        }
+
+        function getWeekData(date) {
+            const result = {
+                pushups: Array(7).fill(0),
+                squats: Array(7).fill(0),
+                situps: Array(7).fill(0)
+            };
+            
+            // Get first day of week (Monday = 0)
+            const day = date.getDay() || 7; // Convert Sunday (0) to 7
+            const firstDay = new Date(date);
+            firstDay.setDate(date.getDate() - day + 1); // Start from Monday
+            
+            // Collect data for each day of current week
+            for (let i = 0; i < 7; i++) {
+                const currentDate = new Date(firstDay);
+                currentDate.setDate(firstDay.getDate() + i);
+                const dateStr = currentDate.toISOString().split('T')[0];
+                
+                if (challengeData.days[dateStr]) {
+                    result.pushups[i] = challengeData.days[dateStr].pushups;
+                    result.squats[i] = challengeData.days[dateStr].squats;
+                    result.situps[i] = challengeData.days[dateStr].situps;
+                }
+            }
+            
+            return result;
+        }
+
+        function getMonthData(date) {
+            const result = {
+                labels: [],
+                completion: []
+            };
+            
+            // Get first day of month
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            
+            // Generate labels
+            for (let i = 1; i <= daysInMonth; i++) {
+                result.labels.push(i);
+                
+                const currentDate = new Date(firstDay);
+                currentDate.setDate(i);
+                const dateStr = currentDate.toISOString().split('T')[0];
+                
+                if (challengeData.days[dateStr]) {
+                    const dayData = challengeData.days[dateStr];
+                    // Calculate completion percentage
+                    const totalExercises = dayData.pushups + dayData.squats + dayData.situps;
+                    const maxPossible = 300; // 100 of each exercise
+                    const percentage = Math.round((totalExercises / maxPossible) * 100);
+                    result.completion.push(percentage);
+                } else {
+                    result.completion.push(0);
+                }
+            }
+            
+            return result;
+        }
+
+        // Export/Import functionality
+        function exportData() {
+            const modal = document.getElementById('data-modal');
+            const jsonTextarea = document.getElementById('json-data');
+            const modalTitle = document.getElementById('modal-title');
+            const modalInstructions = document.getElementById('modal-instructions');
+            const actionBtn = document.getElementById('modal-action-btn');
+
+            modalTitle.textContent = 'Export Data';
+            modalInstructions.textContent = 'Copy this JSON data to save your progress. You can import it later or use it with GitHub.';
+            jsonTextarea.value = JSON.stringify(challengeData, null, 2);
+            actionBtn.textContent = 'Copy to Clipboard';
+            
+            // Set current modal action
+            actionBtn.dataset.action = 'copy';
+            
+            modal.style.display = 'block';
+        }
+
+        function importData() {
+            const modal = document.getElementById('data-modal');
+            const jsonTextarea = document.getElementById('json-data');
+            const modalTitle = document.getElementById('modal-title');
+            const modalInstructions = document.getElementById('modal-instructions');
+            const actionBtn = document.getElementById('modal-action-btn');
+
+            modalTitle.textContent = 'Import Data';
+            modalInstructions.textContent = 'Paste your previously exported JSON data here.';
+            jsonTextarea.value = '';
+            actionBtn.textContent = 'Import Data';
+            
+            // Set current modal action
+            actionBtn.dataset.action = 'import';
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('data-modal');
+            modal.style.display = 'none';
+        }
+
+        function handleModalAction() {
+            const action = document.getElementById('modal-action-btn').dataset.action;
+            const jsonTextarea = document.getElementById('json-data');
+            
+            if (action === 'copy') {
+                // Copy to clipboard
+                jsonTextarea.select();
+                document.execCommand('copy');
+                alert('Data copied to clipboard!');
+                closeModal();
+            } else if (action === 'import') {
+                // Import data
+                try {
+                    const importedData = JSON.parse(jsonTextarea.value);
+                    
+                    // Validate the imported data format
+                    if (!importedData.days || !importedData.startDate) {
+                        throw new Error('Invalid data format');
+                    }
+                    
+                    // Apply the imported data
+                    challengeData = importedData;
+                    saveData();
+                    updateUI();
+                    
+                    alert('Data imported successfully!');
+                    closeModal();
+                } catch (e) {
+                    alert('Error importing data. Please check your JSON format.');
+                }
+            }
+        }
+
+        // GitHub integration helpers
+        function getGistFilename() {
+            return 'yogichal-data.json';
+        }
+    </script>
+</head>
 </html>
